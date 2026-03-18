@@ -32,15 +32,16 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   html {
-    height: 100%;
     height: 100dvh;
+    overflow: hidden;
   }
 
   body {
     font-family: 'Noto Serif JP', serif;
     background: var(--bg);
     color: var(--text);
-    height: 100%;
+    height: 100dvh;
+    max-height: 100dvh;
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -51,25 +52,8 @@
     display: flex;
     flex: 1 1 0;
     min-height: 0;
+    max-height: 100%;
     overflow: hidden;
-  }
-  /* iPad: app-body を縦分割に */
-  .app-body.ip-split {
-    flex-direction: column;
-  }
-  .app-body.ip-split .right-sidebar { display: none; }
-  .app-body.ip-split .main-content  { flex: 1 1 0; min-height: 0; }
-  .app-body.ip-split .ip-bottom-panel { display: flex; }
-  /* ip-split時のサイドバー：fixed ドロワー */
-  .app-body.ip-split ~ * .sidebar,
-  .ip-split-sidebar {
-    position: fixed;
-    left: -240px;
-    top: 0; bottom: 0;
-    width: 240px;
-    z-index: 160;
-    transition: left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: none;
   }
 
   /* ═══ HEADER ═══ */
@@ -112,12 +96,15 @@
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
-    transition: width 0.22s cubic-bezier(0.4,0,0.2,1),
-                opacity 0.18s ease;
     overflow: hidden;
+    transform: translateX(0);
+    transition: transform 0.22s cubic-bezier(0.4,0,0.2,1),
+                opacity 0.18s ease,
+                margin-left 0.22s cubic-bezier(0.4,0,0.2,1);
   }
   .sidebar.collapsed {
-    width: 0;
+    transform: translateX(-220px);
+    margin-left: -220px;
     opacity: 0;
     border-right: none;
   }
@@ -134,6 +121,53 @@
     padding: 0 12px 6px;
   }
   .scenario-list { overflow-y: auto; flex: 1; }
+
+  /* ─── フォルダ ─── */
+  .folder-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 10px 6px 8px;
+    cursor: pointer;
+    font-size: 11px;
+    color: var(--text2);
+    border-left: 2px solid transparent;
+    transition: background 0.12s;
+    user-select: none;
+  }
+  .folder-item:hover { background: var(--bg3); }
+  .folder-chevron {
+    font-size: 8px;
+    color: var(--text3);
+    transition: transform 0.15s;
+    flex-shrink: 0;
+  }
+  .folder-chevron.open { transform: rotate(90deg); }
+  .folder-icon { font-size: 13px; flex-shrink: 0; }
+  .folder-name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 600;
+  }
+  .folder-action-btn {
+    background: none;
+    border: none;
+    color: var(--text3);
+    font-size: 11px;
+    cursor: pointer;
+    padding: 1px 4px;
+    opacity: 0;
+    transition: opacity 0.12s;
+    flex-shrink: 0;
+  }
+  .folder-item:hover .folder-action-btn { opacity: 1; }
+  .folder-action-btn:hover { color: var(--text2); }
+  .folder-children { padding-left: 10px; }
+  .folder-children .scenario-item { border-left-color: transparent; }
+  .folder-contents { display: none; }
+  .folder-contents.open { display: block; }
 
   /* ─── サイドバー下部タブ ─── */
   .sb-tab-bar {
@@ -2075,218 +2109,6 @@
     .right-sidebar { display: none; }
   }
 
-  /* ═══ iPad ボトムシート ═══ */
-  .bs-bar {
-    display: none;
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    height: 44px;
-    background: var(--panel2);
-    border-top: 1px solid var(--border2);
-    z-index: 200;
-    flex-direction: row;
-    align-items: stretch;
-  }
-  .bs-tab {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: 10px;
-    color: var(--text3);
-    cursor: pointer;
-    gap: 2px;
-    border-right: 1px solid var(--border);
-    transition: background 0.12s, color 0.12s;
-    user-select: none;
-  }
-  .bs-tab:last-child { border-right: none; }
-  .bs-tab:hover { background: var(--bg3); color: var(--text2); }
-  .bs-tab.active { color: var(--accent2); background: var(--panel); }
-  .bs-tab-icon { font-size: 14px; line-height: 1; }
-  .bs-tab-label { font-size: 9px; letter-spacing: 0.3px; }
-
-  .bs-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.4);
-    z-index: 201;
-  }
-  .bs-overlay.open { display: block; }
-
-  .bs-sheet {
-    position: fixed;
-    left: 0; right: 0; bottom: 44px;
-    height: 0;
-    background: var(--bg2);
-    border-top: 1px solid var(--border2);
-    z-index: 202;
-    overflow: hidden;
-    transition: height 0.28s cubic-bezier(0.4,0,0.2,1);
-    display: flex;
-    flex-direction: column;
-  }
-  .bs-sheet.open { height: 50dvh; }
-  .bs-sheet-header {
-    display: flex;
-    align-items: center;
-    padding: 8px 12px;
-    border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
-    gap: 8px;
-  }
-  .bs-sheet-title {
-    font-family: 'Cinzel', serif;
-    font-size: 10px;
-    letter-spacing: 2px;
-    color: var(--text3);
-    flex: 1;
-  }
-  .bs-sheet-close {
-    background: none;
-    border: none;
-    color: var(--text3);
-    font-size: 16px;
-    cursor: pointer;
-    padding: 2px 6px;
-    line-height: 1;
-  }
-  .bs-sheet-body {
-    flex: 1 1 0;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
-  }
-
-  @media (max-width: 1180px) {
-    .bs-bar { display: flex; }
-    .app-body { padding-bottom: 44px; }
-    #drawerToggleBtn { display: none; }
-  }
-
-  /* ═══ iPad 分割パネル ═══ */
-  .ip-bottom-panel {
-    display: none;
-    flex-direction: column;
-    flex-shrink: 0;
-    background: var(--bg2);
-    border-top: 1px solid var(--border2);
-    overflow: hidden;
-  }
-  .ip-resizer {
-    height: 6px;
-    background: var(--panel2);
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    cursor: row-resize;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    touch-action: none;
-  }
-  .ip-resizer::after {
-    content: '';
-    width: 32px;
-    height: 2px;
-    background: var(--border2);
-    border-radius: 2px;
-  }
-  .ip-tab-bar {
-    display: flex;
-    border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
-    background: var(--panel2);
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-  .ip-tab-bar::-webkit-scrollbar { display: none; }
-  .ip-tab {
-    flex-shrink: 0;
-    padding: 8px 14px;
-    font-size: 11px;
-    color: var(--text3);
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    white-space: nowrap;
-    transition: color 0.12s, border-color 0.12s;
-  }
-  .ip-tab:hover { color: var(--text2); }
-  .ip-tab.active { color: var(--accent2); border-bottom-color: var(--accent2); }
-  .ip-panel-body {
-    flex: 1 1 0;
-    min-height: 0;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
-  }
-  .ip-preview-area {
-    border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
-    max-height: 45%;
-    overflow-y: auto;
-    background: var(--bg3);
-  }
-  .folder-item {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    padding: 6px 10px 6px 8px;
-    cursor: pointer;
-    font-size: 11px;
-    color: var(--text2);
-    border-left: 2px solid transparent;
-    transition: background 0.12s;
-    user-select: none;
-  }
-  .folder-item:hover { background: var(--bg3); }
-  .folder-chevron {
-    font-size: 9px;
-    color: var(--text3);
-    transition: transform 0.18s;
-    flex-shrink: 0;
-    width: 10px;
-  }
-  .folder-chevron.open { transform: rotate(90deg); }
-  .folder-icon { font-size: 13px; flex-shrink: 0; }
-  .folder-name {
-    flex: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .folder-actions { display: flex; gap: 3px; opacity: 0; transition: opacity 0.12s; }
-  .folder-item:hover .folder-actions { opacity: 1; }
-  .folder-action-btn {
-    background: none;
-    border: none;
-    color: var(--text3);
-    cursor: pointer;
-    font-size: 11px;
-    padding: 1px 4px;
-    border-radius: 2px;
-    line-height: 1;
-  }
-  .folder-action-btn:hover { color: var(--accent3); background: var(--bg2); }
-  .folder-contents { overflow: hidden; max-height: 0; transition: max-height 0.22s ease; }
-  .folder-contents.open { max-height: 2000px; }
-  .folder-contents .scenario-item { padding-left: 22px; }
-  .unfoldered-label {
-    padding: 8px 12px 3px;
-    font-family: 'Cinzel', serif;
-    font-size: 9px;
-    color: var(--text3);
-    letter-spacing: 1px;
-  }
-  .sidebar-btn-row {
-    display: flex;
-    gap: 4px;
-    padding: 6px 10px;
-  }
-  .sidebar-btn-row .btn-sm { flex: 1; text-align: center; }
-
   /* ═══ LIBRARY ═══ */
   .lib-section {
     border-top: 1px solid var(--border);
@@ -2806,18 +2628,6 @@
     </div>
   </div>
 
-  <!-- iPad 下パネル -->
-  <div class="ip-bottom-panel" id="ipBottomPanel">
-    <div class="ip-resizer" id="ipResizer"></div>
-    <div class="ip-tab-bar" id="ipTabBar">
-      <div class="ip-tab active" id="ipTab-inv"      onclick="ipSwitchTab('inv')">🔍 探索者</div>
-      <div class="ip-tab"        id="ipTab-event"    onclick="ipSwitchTab('event')">📋 イベント</div>
-      <div class="ip-tab"        id="ipTab-npc"      onclick="ipSwitchTab('npc')">👤 NPC</div>
-      <div class="ip-tab"        id="ipTab-creature" onclick="ipSwitchTab('creature')">👾 神話生物</div>
-      <div class="ip-tab"        id="ipTab-ref"      onclick="ipSwitchTab('ref')">📎 資料</div>
-    </div>
-    <div class="ip-preview-area" id="ipPreview" style="display:none"></div>
-    <div class="ip-panel-body"   id="ipPanelBody"></div>
   </div>
 </div>
 
@@ -2841,23 +2651,6 @@
   <div class="dice-result" id="diceResult">
     <div class="dice-result-label">クリックでロール</div>
   </div>
-</div>
-
-<!-- BOTTOM SHEET (iPad) -->
-<div class="bs-overlay" id="bsOverlay" onclick="closeBs()"></div>
-<div class="bs-sheet" id="bsSheet">
-  <div class="bs-sheet-header">
-    <span class="bs-sheet-title" id="bsSheetTitle">QUICK REF</span>
-    <button class="bs-sheet-close" onclick="closeBs()">✕</button>
-  </div>
-  <div class="bs-sheet-body" id="bsSheetBody"></div>
-</div>
-<div class="bs-bar" id="bsBar">
-  <div class="bs-tab" id="bsTab-inv"      onclick="openBs('inv')">      <span class="bs-tab-icon">🔍</span><span class="bs-tab-label">探索者</span></div>
-  <div class="bs-tab" id="bsTab-event"    onclick="openBs('event')">    <span class="bs-tab-icon">📋</span><span class="bs-tab-label">イベント</span></div>
-  <div class="bs-tab" id="bsTab-npc"      onclick="openBs('npc')">      <span class="bs-tab-icon">👤</span><span class="bs-tab-label">NPC</span></div>
-  <div class="bs-tab" id="bsTab-creature" onclick="openBs('creature')"> <span class="bs-tab-icon">👾</span><span class="bs-tab-label">神話生物</span></div>
-  <div class="bs-tab" id="bsTab-ref"      onclick="openBs('ref')">      <span class="bs-tab-icon">📎</span><span class="bs-tab-label">資料</span></div>
 </div>
 
 <!-- FLOATING INLINE TOOLBAR -->
@@ -3034,14 +2827,10 @@ let eventMode  = 'view'; // イベントタブモード
 function toggleSidebar() {
   const sidebar = document.querySelector('.sidebar');
   const overlay = document.getElementById('sidebarOverlay');
-  const useDrawer = (typeof _isIpadMode === 'function' && _isIpadMode()) || window.innerWidth <= 1024;
-  if (useDrawer) {
+  const isMobile = window.innerWidth <= 1024;
+  if (isMobile) {
     const isOpen = sidebar.classList.contains('open');
     sidebar.classList.toggle('open', !isOpen);
-    // iPad分割モード時はJSで left を直接操作
-    if (typeof _isIpadMode === 'function' && _isIpadMode()) {
-      sidebar.style.left = isOpen ? '-240px' : '0';
-    }
     overlay.classList.toggle('open', !isOpen);
   } else {
     sidebar.classList.toggle('collapsed');
@@ -3295,7 +3084,6 @@ function getStorageUsage() {
     selectScenario(first);
   }
   initFloatToolbar();
-  _applyIpadMode();
 })();
 
 // ═══════════════════════════════════════════════
@@ -7553,213 +7341,6 @@ function handleImport(event) {
   event.target.value = '';
 }
 
-// ═══════════════════════════════════════════════
-// iPad 分割パネル
-// ═══════════════════════════════════════════════
-let _ipActiveTab = 'inv';
-let _ipPanelHeight = 280;
-
-function _isIpadMode() {
-  return navigator.maxTouchPoints > 1 || window.innerWidth <= 1180;
-}
-
-function _applyIpadMode() {
-  const isIpad = _isIpadMode();
-  const appBody = document.querySelector('.app-body');
-  const btn     = document.getElementById('drawerToggleBtn');
-  const oldBar  = document.getElementById('bsBar');
-  const sidebar = document.querySelector('.sidebar');
-  if (oldBar) oldBar.style.display = 'none';
-  if (!appBody) return;
-  if (isIpad) {
-    appBody.classList.add('ip-split');
-    const panel = document.getElementById('ipBottomPanel');
-    if (panel) panel.style.height = _ipPanelHeight + 'px';
-    if (btn) btn.style.display = 'none';
-    // サイドバーをfixed drawerに
-    if (sidebar) {
-      sidebar.style.position   = 'fixed';
-      sidebar.style.left       = '-240px';
-      sidebar.style.top        = '0';
-      sidebar.style.bottom     = '0';
-      sidebar.style.width      = '240px';
-      sidebar.style.zIndex     = '160';
-      sidebar.style.transition = 'left 0.25s cubic-bezier(0.4,0,0.2,1)';
-    }
-    ipRenderPanel();
-    ipInitResizer();
-  } else {
-    appBody.classList.remove('ip-split');
-    if (btn) btn.style.display = '';
-    if (sidebar) {
-      sidebar.style.position = '';
-      sidebar.style.left     = '';
-      sidebar.style.top      = '';
-      sidebar.style.bottom   = '';
-      sidebar.style.width    = '';
-      sidebar.style.zIndex   = '';
-      sidebar.style.transition = '';
-    }
-  }
-}
-
-window.addEventListener('resize', _applyIpadMode);
-
-function ipSwitchTab(tab) {
-  _ipActiveTab = tab;
-  document.querySelectorAll('.ip-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('ipTab-' + tab)?.classList.add('active');
-  const prev = document.getElementById('ipPreview');
-  if (prev) { prev.style.display = 'none'; prev.innerHTML = ''; }
-  ipRenderPanel();
-}
-
-function ipRenderPanel() {
-  const body = document.getElementById('ipPanelBody');
-  if (!body) return;
-  const s = getCurrentScenario();
-  if (!s) { body.innerHTML = `<div style="padding:16px;text-align:center;font-size:12px;color:var(--text3)">シナリオを選択してください</div>`; return; }
-  body.innerHTML = _ipRenderContent(s, _ipActiveTab);
-}
-
-function _ipRenderContent(s, tab) {
-  const itemStyle = 'display:flex;gap:10px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--border);cursor:pointer';
-
-  if (tab === 'inv') {
-    const invs = s.investigators || [];
-    if (!invs.length) return `<div class="rs-empty" style="padding:16px;text-align:center">探索者なし</div>`;
-    return invs.map(inv => {
-      const thumb = inv.image
-        ? `<img src="${inv.image}" style="width:32px;height:32px;border-radius:4px;object-fit:cover;flex-shrink:0;border:1px solid var(--border)">`
-        : `<span style="font-size:18px;flex-shrink:0">🔍</span>`;
-      const stats = inv.stats || {};
-      const statOrder = ['STR','CON','SIZ','DEX','INT','APP','POW','EDU'];
-      const statsRow = statOrder.some(k => stats[k])
-        ? `<div style="display:grid;grid-template-columns:repeat(8,1fr);gap:2px;margin-top:6px">${
-            statOrder.map(k => `<div style="background:var(--bg3);border:1px solid var(--border);border-radius:2px;padding:2px 1px;text-align:center"><div style="font-size:8px;color:var(--text3)">${k}</div><div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent3)">${stats[k]||0}</div></div>`).join('')
-          }</div>` : '';
-      const skills = inv.skills || [];
-      const skillsRow = skills.length
-        ? `<div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:5px">${skills.map(sk =>
-            `<span style="background:var(--bg3);border:1px solid var(--border2);border-radius:3px;padding:1px 6px;font-size:10px;color:var(--text2)">${esc(sk.name)} <span style="font-family:'Share Tech Mono',monospace;color:var(--accent3)">${sk.val}%</span></span>`
-          ).join('')}</div>` : '';
-      return `<div style="padding:10px 14px;border-bottom:1px solid var(--border)">
-        <div style="display:flex;gap:10px;align-items:flex-start">
-          ${thumb}
-          <div style="flex:1">
-            <div style="font-size:14px;font-weight:700;color:var(--accent3)">${esc(inv.name||'（名前なし）')}</div>
-            <div style="font-size:11px;color:var(--text3)">${[inv.player?'PL:'+esc(inv.player):'',inv.age?esc(inv.age)+'歳':'',esc(inv.job||'')].filter(Boolean).join('　')}</div>
-            <textarea style="width:100%;margin-top:5px;min-height:44px;background:var(--bg3);border:1px solid var(--border);border-radius:3px;color:var(--text2);font-size:16px;font-family:'Noto Serif JP',serif;padding:4px 8px;line-height:1.8;resize:vertical"
-              placeholder="メモ..." oninput="updateInvestigator('${inv.id}','memo',this.value)">${esc(inv.memo||'')}</textarea>
-          </div>
-        </div>
-        ${statsRow}${skillsRow}
-      </div>`;
-    }).join('');
-  }
-
-  if (tab === 'event') {
-    const events = s.events || [];
-    if (!events.length) return `<div class="rs-empty" style="padding:16px;text-align:center">イベントなし</div>`;
-    return events.map(ev => `
-      <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border)">
-        <input type="checkbox" style="margin-top:3px;flex-shrink:0;width:18px;height:18px" ${ev.done?'checked':''}
-          onchange="toggleEventDone('${ev.id}',this.checked);ipRenderPanel()">
-        <div style="flex:1">
-          <div style="font-size:13px;color:var(--text);${ev.done?'text-decoration:line-through;opacity:0.5':''}">${esc(ev.title||'（未入力）')}</div>
-          ${ev.detail?`<div style="font-size:11px;color:var(--text3);margin-top:3px;line-height:1.8">${rubyToHtml(ev.detail)}</div>`:''}
-        </div>
-      </div>`).join('');
-  }
-
-  if (tab === 'npc') {
-    const npcs = s.npcs || [];
-    if (!npcs.length) return `<div class="rs-empty" style="padding:16px;text-align:center">NPCなし</div>`;
-    return npcs.map(e => {
-      const thumb = e.image ? `<img src="${e.image}" style="width:32px;height:32px;border-radius:4px;object-fit:cover;flex-shrink:0;border:1px solid var(--border)">` : `<span style="font-size:18px">👤</span>`;
-      return `<div style="${itemStyle}" onclick="ipShowPreview('npc','${e.id}')">
-        ${thumb}<div><div style="font-size:13px;color:var(--text2)">${esc(e.name||'（名前未入力）')}</div>
-        <div style="font-size:10px;color:var(--text3)">${e.age?e.age+'歳　':''}${esc(e.job||'')}</div></div>
-      </div>`;
-    }).join('');
-  }
-
-  if (tab === 'creature') {
-    const crs = s.creatures || [];
-    if (!crs.length) return `<div class="rs-empty" style="padding:16px;text-align:center">神話生物なし</div>`;
-    return crs.map(e => {
-      const thumb = e.image ? `<img src="${e.image}" style="width:32px;height:32px;border-radius:4px;object-fit:cover;flex-shrink:0;border:1px solid var(--border)">` : `<span style="font-size:18px">👾</span>`;
-      return `<div style="${itemStyle}" onclick="ipShowPreview('creature','${e.id}')">
-        ${thumb}<div><div style="font-size:13px;color:var(--text2)">${esc(e.name||'（名前未入力）')}</div>
-        <div style="font-size:10px;color:var(--text3)">${esc(e.job||'')}</div></div>
-      </div>`;
-    }).join('');
-  }
-
-  if (tab === 'ref') {
-    const refs = s.references || [];
-    if (!refs.length) return `<div class="rs-empty" style="padding:16px;text-align:center">資料なし</div>`;
-    return refs.map(r => `
-      <div style="${itemStyle}" onclick="ipShowPreview('ref','${r.id}')">
-        <span style="font-size:18px;flex-shrink:0">📎</span>
-        <div><div style="font-size:13px;color:var(--text2)">${esc(r.title||'（タイトルなし）')}</div>
-        ${r.body?`<div style="font-size:10px;color:var(--text3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:220px">${esc(r.body.slice(0,40))}</div>`:''}
-        </div>
-      </div>`).join('');
-  }
-  return '';
-}
-
-function ipShowPreview(type, id) {
-  renderRsPreview(type, id);
-  const rsContent = document.getElementById('rsPreview')?.innerHTML || '';
-  const prev = document.getElementById('ipPreview');
-  if (prev) { prev.innerHTML = rsContent; prev.style.display = 'block'; }
-  document.getElementById('rsPreview').innerHTML = '';
-}
-
-function ipShowFromLink(type, id) {
-  if (!_isIpadMode()) return;
-  const tabMap = { npc:'npc', creature:'creature', ref:'ref', rule:'ref' };
-  ipSwitchTab(tabMap[type] || 'npc');
-  setTimeout(() => ipShowPreview(type, id), 50);
-}
-
-let _ipResizerDragging = false;
-let _ipResizerStartY   = 0;
-let _ipResizerStartH   = 0;
-
-function ipInitResizer() {
-  const resizer = document.getElementById('ipResizer');
-  if (!resizer || resizer._ipBound) return;
-  resizer._ipBound = true;
-  const onStart = e => {
-    _ipResizerDragging = true;
-    _ipResizerStartY = e.touches ? e.touches[0].clientY : e.clientY;
-    _ipResizerStartH = _ipPanelHeight;
-    e.preventDefault();
-  };
-  const onMove = e => {
-    if (!_ipResizerDragging) return;
-    const y = e.touches ? e.touches[0].clientY : e.clientY;
-    const delta = _ipResizerStartY - y;
-    _ipPanelHeight = Math.max(120, Math.min(window.innerHeight * 0.7, _ipResizerStartH + delta));
-    const panel = document.getElementById('ipBottomPanel');
-    if (panel) panel.style.height = _ipPanelHeight + 'px';
-    e.preventDefault();
-  };
-  const onEnd = () => { _ipResizerDragging = false; };
-  resizer.addEventListener('touchstart', onStart, { passive: false });
-  resizer.addEventListener('mousedown',  onStart);
-  document.addEventListener('touchmove', onMove,  { passive: false });
-  document.addEventListener('mousemove', onMove);
-  document.addEventListener('touchend',  onEnd);
-  document.addEventListener('mouseup',   onEnd);
-}
-
-// 旧ボトムシート互換
-function openBs()  {}
-function closeBs() {}
 
 function toggleHdrDropdown() {
   document.getElementById('hdrDropdownMenu').classList.toggle('open');
