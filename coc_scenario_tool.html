@@ -57,10 +57,20 @@
   .app-body.ip-split {
     flex-direction: column;
   }
-  .app-body.ip-split .sidebar      { display: none; }
   .app-body.ip-split .right-sidebar { display: none; }
   .app-body.ip-split .main-content  { flex: 1 1 0; min-height: 0; }
   .app-body.ip-split .ip-bottom-panel { display: flex; }
+  /* ip-split時のサイドバー：fixed ドロワー */
+  .app-body.ip-split ~ * .sidebar,
+  .ip-split-sidebar {
+    position: fixed;
+    left: -240px;
+    top: 0; bottom: 0;
+    width: 240px;
+    z-index: 160;
+    transition: left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: none;
+  }
 
   /* ═══ HEADER ═══ */
   header {
@@ -3024,10 +3034,14 @@ let eventMode  = 'view'; // イベントタブモード
 function toggleSidebar() {
   const sidebar = document.querySelector('.sidebar');
   const overlay = document.getElementById('sidebarOverlay');
-  const isMobile = window.innerWidth <= 1024;
-  if (isMobile) {
+  const useDrawer = (typeof _isIpadMode === 'function' && _isIpadMode()) || window.innerWidth <= 1024;
+  if (useDrawer) {
     const isOpen = sidebar.classList.contains('open');
     sidebar.classList.toggle('open', !isOpen);
+    // iPad分割モード時はJSで left を直接操作
+    if (typeof _isIpadMode === 'function' && _isIpadMode()) {
+      sidebar.style.left = isOpen ? '-240px' : '0';
+    }
     overlay.classList.toggle('open', !isOpen);
   } else {
     sidebar.classList.toggle('collapsed');
@@ -7554,6 +7568,7 @@ function _applyIpadMode() {
   const appBody = document.querySelector('.app-body');
   const btn     = document.getElementById('drawerToggleBtn');
   const oldBar  = document.getElementById('bsBar');
+  const sidebar = document.querySelector('.sidebar');
   if (oldBar) oldBar.style.display = 'none';
   if (!appBody) return;
   if (isIpad) {
@@ -7561,11 +7576,30 @@ function _applyIpadMode() {
     const panel = document.getElementById('ipBottomPanel');
     if (panel) panel.style.height = _ipPanelHeight + 'px';
     if (btn) btn.style.display = 'none';
+    // サイドバーをfixed drawerに
+    if (sidebar) {
+      sidebar.style.position   = 'fixed';
+      sidebar.style.left       = '-240px';
+      sidebar.style.top        = '0';
+      sidebar.style.bottom     = '0';
+      sidebar.style.width      = '240px';
+      sidebar.style.zIndex     = '160';
+      sidebar.style.transition = 'left 0.25s cubic-bezier(0.4,0,0.2,1)';
+    }
     ipRenderPanel();
     ipInitResizer();
   } else {
     appBody.classList.remove('ip-split');
     if (btn) btn.style.display = '';
+    if (sidebar) {
+      sidebar.style.position = '';
+      sidebar.style.left     = '';
+      sidebar.style.top      = '';
+      sidebar.style.bottom   = '';
+      sidebar.style.width    = '';
+      sidebar.style.zIndex   = '';
+      sidebar.style.transition = '';
+    }
   }
 }
 
