@@ -7585,11 +7585,11 @@ function _bsRefresh() {
 
 // ─── iPad検出・ボトムシートモード切替 ───
 function _isIpadMode() {
-  // iPadのSafariはnavigator.maxTouchPointsが>0
-  const isIpad = /iPad/.test(navigator.userAgent)
-    || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
-    || /iPhone|iPod/.test(navigator.userAgent);
-  return isIpad || window.innerWidth <= 1180;
+  // iPadはUserAgentがMacintoshだがmaxTouchPoints>1
+  // innerWidthも合わせて判定
+  const isTouch = navigator.maxTouchPoints > 1;
+  const isNarrow = window.innerWidth <= 1180;
+  return isTouch || isNarrow;
 }
 
 function _applyIpadMode() {
