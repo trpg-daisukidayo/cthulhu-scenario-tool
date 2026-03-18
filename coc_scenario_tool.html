@@ -2727,23 +2727,6 @@
 
 <!-- DICE PANEL -->
 <div class="dice-panel" id="dicePanel" style="display:none">
-
-<!-- BOTTOM SHEET (iPad) -->
-<div class="bs-overlay" id="bsOverlay" onclick="closeBs()"></div>
-<div class="bs-sheet" id="bsSheet">
-  <div class="bs-sheet-header">
-    <span class="bs-sheet-title" id="bsSheetTitle">QUICK REF</span>
-    <button class="bs-sheet-close" onclick="closeBs()">✕</button>
-  </div>
-  <div class="bs-sheet-body" id="bsSheetBody"></div>
-</div>
-<div class="bs-bar" id="bsBar">
-  <div class="bs-tab" id="bsTab-inv"      onclick="openBs('inv')">      <span class="bs-tab-icon">🔍</span><span class="bs-tab-label">探索者</span></div>
-  <div class="bs-tab" id="bsTab-event"    onclick="openBs('event')">    <span class="bs-tab-icon">📋</span><span class="bs-tab-label">イベント</span></div>
-  <div class="bs-tab" id="bsTab-npc"      onclick="openBs('npc')">      <span class="bs-tab-icon">👤</span><span class="bs-tab-label">NPC</span></div>
-  <div class="bs-tab" id="bsTab-creature" onclick="openBs('creature')"> <span class="bs-tab-icon">👾</span><span class="bs-tab-label">神話生物</span></div>
-  <div class="bs-tab" id="bsTab-ref"      onclick="openBs('ref')">      <span class="bs-tab-icon">📎</span><span class="bs-tab-label">資料</span></div>
-</div>
   <div class="dice-panel-title">◆ DICE ROLLER ◆</div>
   <div class="dice-grid">
     <div class="dice-btn" onclick="rollDice(4)">D4</div>
@@ -2762,6 +2745,23 @@
   <div class="dice-result" id="diceResult">
     <div class="dice-result-label">クリックでロール</div>
   </div>
+</div>
+
+<!-- BOTTOM SHEET (iPad) -->
+<div class="bs-overlay" id="bsOverlay" onclick="closeBs()"></div>
+<div class="bs-sheet" id="bsSheet">
+  <div class="bs-sheet-header">
+    <span class="bs-sheet-title" id="bsSheetTitle">QUICK REF</span>
+    <button class="bs-sheet-close" onclick="closeBs()">✕</button>
+  </div>
+  <div class="bs-sheet-body" id="bsSheetBody"></div>
+</div>
+<div class="bs-bar" id="bsBar">
+  <div class="bs-tab" id="bsTab-inv"      onclick="openBs('inv')">      <span class="bs-tab-icon">🔍</span><span class="bs-tab-label">探索者</span></div>
+  <div class="bs-tab" id="bsTab-event"    onclick="openBs('event')">    <span class="bs-tab-icon">📋</span><span class="bs-tab-label">イベント</span></div>
+  <div class="bs-tab" id="bsTab-npc"      onclick="openBs('npc')">      <span class="bs-tab-icon">👤</span><span class="bs-tab-label">NPC</span></div>
+  <div class="bs-tab" id="bsTab-creature" onclick="openBs('creature')"> <span class="bs-tab-icon">👾</span><span class="bs-tab-label">神話生物</span></div>
+  <div class="bs-tab" id="bsTab-ref"      onclick="openBs('ref')">      <span class="bs-tab-icon">📎</span><span class="bs-tab-label">資料</span></div>
 </div>
 
 <!-- FLOATING INLINE TOOLBAR -->
