@@ -2146,6 +2146,8 @@
     .bs-bar { display: flex; }
     /* ボトムシート分のパディング確保 */
     .app-body { padding-bottom: 44px; }
+    /* ⊞ボタンはiPadでは不要 */
+    #drawerToggleBtn { display: none; }
   }
   .folder-item {
     display: flex;
@@ -2551,7 +2553,7 @@
         <div class="hdr-dropdown-menu-item" style="color:#c8a840" onclick="importAllData();closeHdrDropdown()">📂 全データ読込</div>
       </div>
     </div>
-    <button class="drawer-toggle" onclick="toggleRightSidebar()" title="クイック参照" style="margin-left:4px">⊞</button>
+    <button class="drawer-toggle" onclick="toggleRightSidebar()" title="クイック参照" style="margin-left:4px" id="drawerToggleBtn">⊞</button>
   </div>
 </header>
 
