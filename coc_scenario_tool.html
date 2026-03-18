@@ -2144,9 +2144,7 @@
 
   @media (max-width: 1180px) {
     .bs-bar { display: flex; }
-    /* ボトムシート分のパディング確保 */
     .app-body { padding-bottom: 44px; }
-    /* ⊞ボタンはiPadでは不要 */
     #drawerToggleBtn { display: none; }
   }
   .folder-item {
@@ -3197,6 +3195,7 @@ function getStorageUsage() {
     selectScenario(first);
   }
   initFloatToolbar();
+  _applyIpadMode();
 })();
 
 // ═══════════════════════════════════════════════
@@ -7583,6 +7582,27 @@ function _bsRefresh() {
   if (!s) return;
   document.getElementById('bsSheetBody').innerHTML = _bsRenderContent(s, _bsActiveTab);
 }
+
+// ─── iPad検出・ボトムシートモード切替 ───
+function _isIpadMode() {
+  // iPadのSafariはnavigator.maxTouchPointsが>0
+  const isIpad = /iPad/.test(navigator.userAgent)
+    || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+    || /iPhone|iPod/.test(navigator.userAgent);
+  return isIpad || window.innerWidth <= 1180;
+}
+
+function _applyIpadMode() {
+  const isIpad = _isIpadMode();
+  const bar = document.getElementById('bsBar');
+  const btn = document.getElementById('drawerToggleBtn');
+  const body = document.querySelector('.app-body');
+  if (bar)  bar.style.display  = isIpad ? 'flex' : 'none';
+  if (btn)  btn.style.display  = isIpad ? 'none' : '';
+  if (body) body.style.paddingBottom = isIpad ? '44px' : '';
+}
+
+window.addEventListener('resize', _applyIpadMode);
 
 // ─── ヘッダードロップダウン ───
 function toggleHdrDropdown() {
