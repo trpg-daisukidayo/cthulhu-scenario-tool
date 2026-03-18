@@ -7597,7 +7597,15 @@ function _applyIpadMode() {
   const bar = document.getElementById('bsBar');
   const btn = document.getElementById('drawerToggleBtn');
   const body = document.querySelector('.app-body');
-  if (bar)  bar.style.display  = isIpad ? 'flex' : 'none';
+  if (bar) {
+    bar.style.display  = isIpad ? 'flex' : 'none';
+    bar.style.height   = '44px';
+    bar.style.position = 'fixed';
+    bar.style.bottom   = '0';
+    bar.style.left     = '0';
+    bar.style.right    = '0';
+    bar.style.zIndex   = '200';
+  }
   if (btn)  btn.style.display  = isIpad ? 'none' : '';
   if (body) body.style.paddingBottom = isIpad ? '44px' : '';
 }
